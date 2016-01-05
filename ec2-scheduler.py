@@ -30,29 +30,31 @@ def usage():
     msg = """
 
     -a --address	      AWS Associated IP Public Instance (Start)
-    -o --option 	      Option [ start | stop | restart | status | backup | delete (images) | view (images) ]
-    -f --filter		      AWS Filter Name Images delete
+    -o --option 	      Option [ start | stop | restart | status | backup | delete (images) | visualizar (images) ]
+    -f --filter		      AWS Filter Name  Images DELETAR
     -r --region   	      AWS Region (us-east-1 = USA / sa-east-1 = BR / us-west-2 = OREGON )
     -i --id                   AWS Access Key ID
     -k --key                  AWS Secret Access Key
     -s --server               AWS Server ID  (i-01af2xx)
-    -d --days		      Delete/View AMI ( example =  AMI > 2 days )
+    -d --days		      Delete/Visualizar AMI ( example =  AMI > 2 days )
     -c --account	      AWS Account number
  
     Exemplo:
  
 	1) [ Start | Stop | restart | backup ] Instance 
-	    ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4dxxx -o start
-	    ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4dxxx -o start -a 53.20.40.1 
-	    ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4dxxx -o backup 
+	    ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4d54ac -o start
+	    ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4d54ac -o start -a 53.20.40.1 
+	    ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4d54ac -o backup 
 
-        2) [ View | delete | Contar AMI | Delete SnapShot Orfao ] Images
-            ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o contar -c '123456789'         
-            ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o view -f "BACKUP*"         
-            ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o delete -f "BACKUP*"         
-            ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4dxxx -o view -f *BACKUP*        
-            ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4dxxx -o delete -d 2        
-            ./ec2-scheduler.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o delete_snapshot_orfao 
+        2) [ Visualizar | Deletar | Contar | Delete SnapShot Orfao ] Images
+            ./ec2-penetta.py -r us-east-1 -i YUYiUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o contar -c '123456789'         
+            ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o visualizar -f "BACKUP*"         
+            ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o delete -f "BACKUP*"         
+            ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4d54ac -o visualizar -f *BACKUP*        
+            ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -s i-fc4d54ac -o delete -d 2        
+            ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o delete_snapshot_orfao 
+            ./ec2-penetta.py -r us-east-1 -i YUYUQWMNBBMLZSDAS -k 3jk3ioueqwehkl -o delete_vol_available 
+
 
     """
     print msg
@@ -241,12 +243,12 @@ def limpaimagens ():
 	#for images in list_imagens:
 	#	 print "Imagen count  (%s) - %s  - [%s] - {%s} - (%s)  ... " % (images.id,images.name, images.description,images.state,images.location)   
    #else:
-   elif option == 'view':
+   elif option == 'visualizar':
      #list_imagens = conn.get_all_images(filters={'name' : '*AGENDADO*'})
      print filter
      list_imagens = conn.get_all_images(filters={'name' : filter })
      for images in list_imagens:
-         print "Imagen view  (%s) - %s  - [%s] - {%s} - (%s)  ... " % (images.id,images.name, images.description,images.state,images.location)
+         print "Imagen visualizar  (%s) - %s  - [%s] - {%s} - (%s)  ... " % (images.id,images.name, images.description,images.state,images.location)
 
 
 def delete_orphan_snapshots(vdryRun=True):
@@ -297,18 +299,37 @@ def delete_orphan_snapshots(vdryRun=True):
 
 
 
+def delete_volume_available():
+
+    print "Deleting volumes not used..."
+    # List out the volumes
+    vol_id = conn.get_all_volumes(volume_ids=None, filters=None)
+    for volume in vol_id:
+        #if volumes.attachment_state() == 'attached':
+        #if volume.attachment_state() != 'attached':
+        if volume.status == 'available':
+            print "Volumes: "+ volume.id, volume.status
+            #print volumes.attachment_state()
+            conn.delete_volume(volume.id)
+
+
+
 ##### CHAMANDO AS FUNCOES
 if option in ('backup', 'start', 'stop','status'):
    #print "BACKUP INSTANCE"
    startstopbackup()
 
-elif option in ('delete','view','contar'):
+elif option in ('delete','visualizar','contar'):
    print ''
    limpaimagens()
 
 elif option in ('delete_snapshot_orfao'):
    #print  "IMAGES    : %s " % (option)
    delete_orphan_snapshots()
+
+elif option in ('delete_vol_available'):
+   #print  "IMAGES    : %s " % (option)
+   delete_volume_available()
 
 else:
    #print "OPCAO ESCOLHIDA ERRADA!"
