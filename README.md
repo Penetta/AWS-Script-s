@@ -1,6 +1,6 @@
 # AWS-Scripts
 
-Options Script: <br>
+<b>Options Script: </b><br>
 	. Start EC2 <br>
 	. Stop EC2 <br>
 	. Backup AMI EC2 ( With copy of tags ) <br>
@@ -9,7 +9,7 @@ Options Script: <br>
 	. Delete Volume Orphaned<br>
 	
 
-Examples:
+<b>Examples:</b>
 
     -a --address	AWS Associated IP Public Instance (Start)
     -o --optio		Option [ start | stop | restart | status | backup | delete (images) | visualizar (images) ]
