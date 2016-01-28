@@ -3,7 +3,7 @@
 <b>Options Script: </b><br>
 	. Start EC2 <br>
 	. Stop EC2 <br>
-	. Backup AMI EC2 ( With copy of tags ) <br>
+	. Backup AMI EC2 ( With copy the tags ) <br>
 	. Delete AMI EC2 <br>
 	. Delete SnapShot Orphaned<br>
 	. Delete Volume Orphaned<br>
